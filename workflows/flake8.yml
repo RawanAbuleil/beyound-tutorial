@@ -1,16 +1,21 @@
-name: Flake8
-on: pull_request
+name: ci
+on:
+  pull_request:
+    paths:
+      - 'scripts/**'
 jobs:
-flake8:
-name: Check code with Flake8
-runs-on: ubuntu-20.04
-container: fedora:34
-steps:
-- name: Install Pipenv and Git
-run: dnf install -y pipenv git
-- name: Checkout code
-uses: actions/checkout@v2
-- name: Setup environment
-run: pipenv sync --dev
-- name: Run Flake8
-run: pipenv run flake8 --max-line-length 120
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
