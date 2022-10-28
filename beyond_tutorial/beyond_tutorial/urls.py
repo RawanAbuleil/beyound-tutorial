@@ -5,4 +5,4 @@ from msgboard import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.board, name='board')
-]
+    ]
